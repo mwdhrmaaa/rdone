@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Workout;
 
 class WorkoutController extends Controller
 {
-    use App\Models\Workout;
-
     /**
      * Display a listing of the resource.
      */
