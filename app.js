@@ -14,64 +14,70 @@ const App = {
     },
 
     init() {
+        console.log('App Initializing...');
         this.bindEvents();
         this.render();
         
-        // Set default date for journal modal
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('journal-date').value = today;
+        // Set default date for journal modal if it exists
+        const journalDateInput = document.getElementById('journal-date');
+        if (journalDateInput) {
+            journalDateInput.value = new Date().toISOString().split('T')[0];
+        }
     },
 
     bindEvents() {
         // Tab Navigation
         document.querySelectorAll('.nav-item').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
                 const target = btn.dataset.tab;
+                console.log('Switching to tab:', target);
                 this.switchTab(target);
             });
         });
 
         // Workout Modal
-        document.getElementById('open-workout-modal').addEventListener('click', () => {
-            this.toggleModal('workout-modal', true);
-        });
+        const openWorkoutBtn = document.getElementById('open-workout-modal');
+        if (openWorkoutBtn) {
+            openWorkoutBtn.addEventListener('click', () => this.toggleModal('workout-modal', true));
+        }
 
         // Schedule Modal
-        document.getElementById('open-schedule-modal').addEventListener('click', () => {
-            this.populateWorkoutDatalist();
-            this.toggleModal('schedule-modal', true);
-        });
+        const openScheduleBtn = document.getElementById('open-schedule-modal');
+        if (openScheduleBtn) {
+            openScheduleBtn.addEventListener('click', () => {
+                this.populateWorkoutDatalist();
+                this.toggleModal('schedule-modal', true);
+            });
+        }
 
         // Journal Modal
-        document.getElementById('open-journal-modal').addEventListener('click', () => {
-            this.toggleModal('journal-modal', true);
-        });
+        const openJournalBtn = document.getElementById('open-journal-modal');
+        if (openJournalBtn) {
+            openJournalBtn.addEventListener('click', () => this.toggleModal('journal-modal', true));
+        }
 
         // Close Modals
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const modal = e.target.closest('.modal');
-                this.toggleModal(modal.id, false);
+                if (modal) this.toggleModal(modal.id, false);
             });
         });
 
-        // Workout Form Submit
-        document.getElementById('workout-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.addWorkout();
-        });
+        // Form Submissions
+        this.bindForm('workout-form', () => this.addWorkout());
+        this.bindForm('schedule-form', () => this.addSchedule());
+        this.bindForm('journal-form', () => this.addJournal());
+    },
 
-        // Schedule Form Submit
-        document.getElementById('schedule-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.addSchedule();
-        });
-
-        // Journal Form Submit
-        document.getElementById('journal-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.addJournal();
-        });
+    bindForm(id, action) {
+        const form = document.getElementById(id);
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                action();
+            });
+        }
     },
 
     switchTab(tabId) {
@@ -81,64 +87,56 @@ const App = {
         document.querySelectorAll('.tab-content').forEach(section => {
             section.classList.toggle('active', section.id === tabId);
         });
-        document.getElementById('tab-title').textContent = tabId.charAt(0).toUpperCase() + tabId.slice(1);
+        const titleEl = document.getElementById('tab-title');
+        if (titleEl) titleEl.textContent = tabId.charAt(0).toUpperCase() + tabId.slice(1);
     },
 
     toggleModal(id, show) {
-        document.getElementById(id).classList.toggle('active', show);
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        
+        modal.classList.toggle('active', show);
         if (!show) {
-            document.getElementById(id).querySelector('form').reset();
-            // Reset journal date to today when closing
+            const form = modal.querySelector('form');
+            if (form) form.reset();
             if (id === 'journal-modal') {
-                document.getElementById('journal-date').value = new Date().toISOString().split('T')[0];
+                const journalDateInput = document.getElementById('journal-date');
+                if (journalDateInput) journalDateInput.value = new Date().toISOString().split('T')[0];
             }
         }
     },
 
-    // Workout Actions
+    // Actions
     addWorkout() {
         const name = document.getElementById('workout-name').value;
         const type = document.getElementById('workout-type').value;
         const desc = document.getElementById('workout-desc').value;
 
-        const newWorkout = {
-            id: Date.now().toString(),
-            name,
-            type,
-            desc
-        };
-
-        this.data.workouts.push(newWorkout);
+        this.data.workouts.push({ id: Date.now().toString(), name, type, desc });
         this.save();
         this.toggleModal('workout-modal', false);
     },
 
     deleteWorkout(id) {
-        if (!confirm('Are you sure you want to delete this workout? It will also be removed from your schedule.')) return;
-        
+        if (!confirm('Are you sure? This will remove it from library and schedule.')) return;
         this.data.workouts = this.data.workouts.filter(w => w.id !== id);
         this.data.schedules = this.data.schedules.filter(s => s.workoutId !== id);
         this.save();
     },
 
-    // Schedule Actions
     addSchedule() {
         const workoutName = document.getElementById('schedule-workout-name').value;
         const day = document.getElementById('schedule-day').value;
         const time = document.getElementById('schedule-time').value;
 
-        // Try to find if it matches an existing workout to get the ID/Type later
         const match = this.data.workouts.find(w => w.name.toLowerCase() === workoutName.toLowerCase());
-
-        const newSchedule = {
+        this.data.schedules.push({
             id: Date.now().toString(),
             workoutName,
             workoutId: match ? match.id : null,
             day,
             time
-        };
-
-        this.data.schedules.push(newSchedule);
+        });
         this.save();
         this.toggleModal('schedule-modal', false);
     },
@@ -148,34 +146,24 @@ const App = {
         this.save();
     },
 
-    // Journal Actions
     addJournal() {
         const date = document.getElementById('journal-date').value;
         const title = document.getElementById('journal-title').value;
         const content = document.getElementById('journal-content').value;
 
-        const newEntry = {
-            id: Date.now().toString(),
-            date,
-            title,
-            content
-        };
-
-        this.data.journals.unshift(newEntry); // Newest first
-        // Sort by date descending
+        this.data.journals.unshift({ id: Date.now().toString(), date, title, content });
         this.data.journals.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
         this.save();
         this.toggleModal('journal-modal', false);
     },
 
     deleteJournal(id) {
-        if (!confirm('Are you sure you want to delete this entry?')) return;
+        if (!confirm('Are you sure?')) return;
         this.data.journals = this.data.journals.filter(j => j.id !== id);
         this.save();
     },
 
-    // UI Rendering
+    // Rendering
     render() {
         this.renderDashboard();
         this.renderWorkoutGrid();
@@ -190,39 +178,37 @@ const App = {
         const todaySchedules = this.data.schedules.filter(s => s.day === todayWeekday);
         const todayJournal = this.data.journals.find(j => j.date === todayDate);
         
-        const todayNameEl = document.getElementById('today-workout-name');
-        const todayMetaEl = document.getElementById('today-workout-meta');
-        const todayListEl = document.getElementById('today-routine-list');
+        const nameEl = document.getElementById('today-workout-name');
+        const metaEl = document.getElementById('today-workout-meta');
+        const listEl = document.getElementById('today-routine-list');
+
+        if (!nameEl || !metaEl || !listEl) return;
 
         if (todaySchedules.length > 0) {
-            const firstWorkout = this.data.workouts.find(w => w.id === todaySchedules[0].workoutId);
-            todayNameEl.textContent = firstWorkout ? firstWorkout.name : 'Unknown Workout';
-            todayMetaEl.textContent = todaySchedules.length > 1 ? `+ ${todaySchedules.length - 1} more scheduled` : 'Ready to go!';
+            const firstW = todaySchedules[0].workoutId ? this.data.workouts.find(w => w.id === todaySchedules[0].workoutId) : null;
+            nameEl.textContent = firstW ? firstW.name : todaySchedules[0].workoutName;
+            metaEl.textContent = todaySchedules.length > 1 ? `+ ${todaySchedules.length - 1} more scheduled` : 'Ready to go!';
             
-            todayListEl.innerHTML = todaySchedules.map(s => {
+            listEl.innerHTML = todaySchedules.map(s => {
                 const w = s.workoutId ? this.data.workouts.find(work => work.id === s.workoutId) : null;
-                const name = w ? w.name : s.workoutName;
-                const typeChar = w ? w.type.charAt(0) : '?';
-                
                 return `
                     <div class="routine-item">
-                        <div class="avatar">${typeChar}</div>
+                        <div class="avatar">${w ? w.type.charAt(0) : '?'}</div>
                         <div class="flex-grow">
-                            <strong>${name}</strong>
+                            <strong>${w ? w.name : s.workoutName}</strong>
                             <p class="text-sm text-secondary">${s.time || 'Flexible'}</p>
                         </div>
                     </div>
                 `;
             }).join('');
         } else {
-            todayNameEl.textContent = 'Rest Day';
-            todayMetaEl.textContent = 'Recovery is key';
-            todayListEl.innerHTML = '<div class="empty-state">No workouts scheduled for today.</div>';
+            nameEl.textContent = 'Rest Day';
+            metaEl.textContent = 'Recovery is key';
+            listEl.innerHTML = '<div class="empty-state">No workouts scheduled for today.</div>';
         }
 
-        // Add Journal highlight to dashboard if exists for today
         if (todayJournal) {
-            todayListEl.innerHTML += `
+            listEl.innerHTML += `
                 <div class="routine-item" style="border-left: 4px solid var(--accent-color); margin-top: 16px;">
                     <div class="avatar" style="background: var(--card-bg); border: 1px solid var(--accent-color); color: var(--accent-color);">📝</div>
                     <div class="flex-grow">
@@ -233,14 +219,17 @@ const App = {
             `;
         }
 
-        document.getElementById('total-scheduled').textContent = this.data.schedules.length;
-        document.getElementById('total-workouts').textContent = this.data.workouts.length;
+        const scheduledEl = document.getElementById('total-scheduled');
+        const workoutsEl = document.getElementById('total-workouts');
+        if (scheduledEl) scheduledEl.textContent = this.data.schedules.length;
+        if (workoutsEl) workoutsEl.textContent = this.data.workouts.length;
     },
 
     renderWorkoutGrid() {
         const grid = document.getElementById('workout-grid');
+        if (!grid) return;
         if (this.data.workouts.length === 0) {
-            grid.innerHTML = '<div class="empty-state">No workouts in your library. Add one to get started!</div>';
+            grid.innerHTML = '<div class="empty-state">No workouts in library.</div>';
             return;
         }
 
@@ -250,23 +239,33 @@ const App = {
                     <span class="badge">${w.type}</span>
                 </div>
                 <h4 class="mb-2">${w.name}</h4>
-                <p>${w.desc || 'No description provided'}</p>
+                <p>${w.desc || 'No description'}</p>
                 <div class="card-actions">
                     <button class="btn btn-danger btn-sm" onclick="App.deleteWorkout('${w.id}')">Delete</button>
+                    <button class="btn btn-secondary btn-sm" onclick="App.quickSchedule('${w.name}')">Schedule</button>
                 </div>
             </div>
         `).join('');
     },
 
+    quickSchedule(name) {
+        this.switchTab('schedule');
+        this.populateWorkoutDatalist();
+        this.toggleModal('schedule-modal', true);
+        document.getElementById('schedule-workout-name').value = name;
+    },
+
     renderWeeklySchedule() {
         const daysContainer = document.getElementById('calendar-days');
+        if (!daysContainer) return;
         const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const today = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date());
         
         daysContainer.innerHTML = days.map(day => {
             const daySchedules = this.data.schedules.filter(s => s.day === day);
             return `
                 <div class="day-row">
-                    <div class="day-name">${day} ${day === new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date()) ? '(Today)' : ''}</div>
+                    <div class="day-name">${day} ${day === today ? '(Today)' : ''}</div>
                     <div class="day-workouts">
                         ${daySchedules.map(s => {
                             const w = s.workoutId ? this.data.workouts.find(work => work.id === s.workoutId) : null;
@@ -279,8 +278,6 @@ const App = {
                             `;
                         }).join('') || '<span class="text-secondary">Rest</span>'}
                     </div>
-                    <div class="day-actions">
-                    </div>
                 </div>
             `;
         }).join('');
@@ -288,8 +285,9 @@ const App = {
 
     renderJournal() {
         const list = document.getElementById('journal-list');
+        if (!list) return;
         if (this.data.journals.length === 0) {
-            list.innerHTML = '<div class="empty-state">Your journal is empty. What did you do today?</div>';
+            list.innerHTML = '<div class="empty-state">Journal is empty.</div>';
             return;
         }
 
@@ -309,15 +307,18 @@ const App = {
 
     populateWorkoutDatalist() {
         const datalist = document.getElementById('workout-options');
-        datalist.innerHTML = this.data.workouts.map(w => `
-            <option value="${w.name}">
-        `).join('');
+        if (datalist) {
+            datalist.innerHTML = this.data.workouts.map(w => `<option value="${w.name}">`).join('');
+        }
     }
 };
 
-// Start the app
-App.init();
-
-// Global handles for HTML onclick attributes
+// Global Access
 window.App = App;
+
+// Safe Init
+document.addEventListener('DOMContentLoaded', () => {
+    App.init();
+});
+
 

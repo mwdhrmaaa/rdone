@@ -367,23 +367,12 @@ nav {
     transition: all 0.2s;
 }
 
-.btn-primary {
-    background-color: var(--accent-color);
-    color: white;
+.btn:active {
+    transform: scale(0.95);
 }
 
-.btn-primary:hover {
-    background-color: var(--accent-hover);
-}
-
-.btn-secondary {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-}
-
-.btn-danger {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
+.nav-item {
+    cursor: pointer;
 }
 
 /* Modals */
@@ -399,6 +388,7 @@ nav {
     z-index: 1000;
     align-items: center;
     justify-content: center;
+    pointer-events: auto;
 }
 
 .modal.active {
