@@ -252,6 +252,13 @@ const App = {
         `).join('');
     },
 
+    quickSchedule(name) {
+        this.switchTab('schedule');
+        this.populateWorkoutDatalist();
+        this.toggleModal('schedule-modal', true);
+        document.getElementById('schedule-workout-name').value = name;
+    },
+
     quickLog(name) {
         this.switchTab('journal');
         this.toggleModal('journal-modal', true);
