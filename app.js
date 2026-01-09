@@ -38,7 +38,7 @@ const App = {
 
         // Schedule Modal
         document.getElementById('open-schedule-modal').addEventListener('click', () => {
-            this.populateWorkoutSelect();
+            this.populateWorkoutDatalist();
             this.toggleModal('schedule-modal', true);
         });
 
@@ -123,13 +123,17 @@ const App = {
 
     // Schedule Actions
     addSchedule() {
-        const workoutId = document.getElementById('schedule-workout-id').value;
+        const workoutName = document.getElementById('schedule-workout-name').value;
         const day = document.getElementById('schedule-day').value;
         const time = document.getElementById('schedule-time').value;
 
+        // Try to find if it matches an existing workout to get the ID/Type later
+        const match = this.data.workouts.find(w => w.name.toLowerCase() === workoutName.toLowerCase());
+
         const newSchedule = {
             id: Date.now().toString(),
-            workoutId,
+            workoutName,
+            workoutId: match ? match.id : null,
             day,
             time
         };
@@ -196,12 +200,15 @@ const App = {
             todayMetaEl.textContent = todaySchedules.length > 1 ? `+ ${todaySchedules.length - 1} more scheduled` : 'Ready to go!';
             
             todayListEl.innerHTML = todaySchedules.map(s => {
-                const w = this.data.workouts.find(work => work.id === s.workoutId);
+                const w = s.workoutId ? this.data.workouts.find(work => work.id === s.workoutId) : null;
+                const name = w ? w.name : s.workoutName;
+                const typeChar = w ? w.type.charAt(0) : '?';
+                
                 return `
                     <div class="routine-item">
-                        <div class="avatar">${w ? w.type.charAt(0) : '?'}</div>
+                        <div class="avatar">${typeChar}</div>
                         <div class="flex-grow">
-                            <strong>${w ? w.name : 'Deleted Workout'}</strong>
+                            <strong>${name}</strong>
                             <p class="text-sm text-secondary">${s.time || 'Flexible'}</p>
                         </div>
                     </div>
@@ -262,10 +269,11 @@ const App = {
                     <div class="day-name">${day} ${day === new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date()) ? '(Today)' : ''}</div>
                     <div class="day-workouts">
                         ${daySchedules.map(s => {
-                            const w = this.data.workouts.find(work => work.id === s.workoutId);
+                            const w = s.workoutId ? this.data.workouts.find(work => work.id === s.workoutId) : null;
+                            const name = w ? w.name : s.workoutName;
                             return `
                                 <div class="scheduled-item">
-                                    ${w ? w.name : 'Unknown'} ${s.time ? ` @ ${s.time}` : ''}
+                                    ${name} ${s.time ? ` @ ${s.time}` : ''}
                                     <span style="cursor:pointer; margin-left:8px;" onclick="App.removeSchedule('${s.id}')">×</span>
                                 </div>
                             `;
@@ -299,14 +307,10 @@ const App = {
         `).join('');
     },
 
-    populateWorkoutSelect() {
-        const select = document.getElementById('schedule-workout-id');
-        if (this.data.workouts.length === 0) {
-            select.innerHTML = '<option disabled>Please add a workout first</option>';
-            return;
-        }
-        select.innerHTML = this.data.workouts.map(w => `
-            <option value="${w.id}">${w.name} (${w.type})</option>
+    populateWorkoutDatalist() {
+        const datalist = document.getElementById('workout-options');
+        datalist.innerHTML = this.data.workouts.map(w => `
+            <option value="${w.name}">
         `).join('');
     }
 };

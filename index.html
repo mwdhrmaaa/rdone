@@ -151,8 +151,9 @@
             <h3>Schedule Workout</h3>
             <form id="schedule-form">
                 <div class="form-group">
-                    <label>Select Workout</label>
-                    <select id="schedule-workout-id" required></select>
+                    <label>Workout Name</label>
+                    <input type="text" id="schedule-workout-name" list="workout-options" required placeholder="Type or select a workout...">
+                    <datalist id="workout-options"></datalist>
                 </div>
                 <div class="form-group">
                     <label>Day</label>
