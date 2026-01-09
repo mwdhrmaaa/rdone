@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitPlan - Premium Workout Scheduler</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <h1>FitPlan</h1>
+            </div>
+            <nav>
+                <button class="nav-item active" data-tab="dashboard">
+                    <span class="icon">📊</span> Dashboard
+                </button>
+                <button class="nav-item" data-tab="workouts">
+                    <span class="icon">🏋️</span> Workouts
+                </button>
+                <button class="nav-item" data-tab="schedule">
+                    <span class="icon">📅</span> Schedule
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Welcome back!</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <!-- Header -->
+            <header class="main-header">
+                <h2 id="tab-title">Dashboard</h2>
+                <div class="user-profile">
+                    <div class="avatar">S</div>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="stat-card prime">
+                        <div class="stat-info">
+                            <h3>Today's Focus</h3>
+                            <div id="today-workout-name" class="stat-value">Rest Day</div>
+                            <p id="today-workout-meta">Recovery is key</p>
+                        </div>
+                        <div class="stat-icon">🔥</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Scheduled Tasks</h3>
+                        <div id="total-scheduled" class="stat-value">0</div>
+                        <p>For this week</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Workouts</h3>
+                        <div id="total-workouts" class="stat-value">0</div>
+                        <p>In library</p>
+                    </div>
+                </div>
+
+                <div class="section-container">
+                    <h3>Today's Routine</h3>
+                    <div id="today-routine-list" class="routine-list">
+                        <!-- Dynamically populated -->
+                        <div class="empty-state">No workouts scheduled for today.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workouts Tab -->
+            <section id="workouts" class="tab-content">
+                <div class="tab-header">
+                    <h3>Workout Library</h3>
+                    <button class="btn btn-primary" id="open-workout-modal">+ Add New</button>
+                </div>
+                <div id="workout-grid" class="data-grid">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+
+            <!-- Schedule Tab -->
+            <section id="schedule" class="tab-content">
+                <div class="tab-header">
+                    <h3>Weekly Planner</h3>
+                    <button class="btn btn-primary" id="open-schedule-modal">+ Schedule Workout</button>
+                </div>
+                <div class="calendar-view">
+                    <!-- Weekdays -->
+                    <div class="calendar-days" id="calendar-days">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="workout-modal" class="modal">
+        <div class="modal-content">
+            <h3>Add Workout</h3>
+            <form id="workout-form">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="workout-name" required placeholder="e.g. Chest Press">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="workout-type" required>
+                        <option value="Strength">Strength</option>
+                        <option value="Cardio">Cardio</option>
+                        <option value="HIIT">HIIT</option>
+                        <option value="Flexibility">Flexibility</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="workout-desc" rows="3" placeholder="Sets, reps, or notes..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Workout</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="schedule-modal" class="modal">
+        <div class="modal-content">
+            <h3>Schedule Workout</h3>
+            <form id="schedule-form">
+                <div class="form-group">
+                    <label>Select Workout</label>
+                    <select id="schedule-workout-id" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Day</label>
+                    <select id="schedule-day" required>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Time (Optional)</label>
+                    <input type="time" id="schedule-time">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Schedule Now</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
