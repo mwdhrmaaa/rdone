@@ -187,17 +187,21 @@ const App = {
         if (todaySchedules.length > 0) {
             const firstW = todaySchedules[0].workoutId ? this.data.workouts.find(w => w.id === todaySchedules[0].workoutId) : null;
             nameEl.textContent = firstW ? firstW.name : todaySchedules[0].workoutName;
-            metaEl.textContent = todaySchedules.length > 1 ? `+ ${todaySchedules.length - 1} more scheduled` : 'Ready to go!';
+            metaEl.textContent = todaySchedules.length > 1 ? `+ ${todaySchedules.length - 1} more scheduled` : 'Planned Routine';
             
             listEl.innerHTML = todaySchedules.map(s => {
                 const w = s.workoutId ? this.data.workouts.find(work => work.id === s.workoutId) : null;
+                const name = w ? w.name : s.workoutName;
                 return `
-                    <div class="routine-item">
-                        <div class="avatar">${w ? w.type.charAt(0) : '?'}</div>
-                        <div class="flex-grow">
-                            <strong>${w ? w.name : s.workoutName}</strong>
-                            <p class="text-sm text-secondary">${s.time || 'Flexible'}</p>
+                    <div class="routine-item" style="justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div class="avatar">${w ? w.type.charAt(0) : '?'}</div>
+                            <div class="flex-grow">
+                                <strong>${name}</strong>
+                                <p class="text-sm text-secondary">${s.time || 'Planned'}</p>
+                            </div>
                         </div>
+                        <button class="btn btn-secondary btn-sm" onclick="App.quickLog('${name}')">Log It</button>
                     </div>
                 `;
             }).join('');
@@ -209,11 +213,11 @@ const App = {
 
         if (todayJournal) {
             listEl.innerHTML += `
-                <div class="routine-item" style="border-left: 4px solid var(--accent-color); margin-top: 16px;">
-                    <div class="avatar" style="background: var(--card-bg); border: 1px solid var(--accent-color); color: var(--accent-color);">📝</div>
+                <div class="routine-item" style="border-left: 4px solid var(--success); margin-top: 16px; background: rgba(34, 197, 94, 0.05);">
+                    <div class="avatar" style="background: var(--success); color: white;">✓</div>
                     <div class="flex-grow">
-                        <strong>Log: ${todayJournal.title}</strong>
-                        <p class="text-sm text-secondary">Logged today</p>
+                        <strong>Logged: ${todayJournal.title}</strong>
+                        <p class="text-sm text-secondary">Great job today!</p>
                     </div>
                 </div>
             `;
@@ -248,11 +252,10 @@ const App = {
         `).join('');
     },
 
-    quickSchedule(name) {
-        this.switchTab('schedule');
-        this.populateWorkoutDatalist();
-        this.toggleModal('schedule-modal', true);
-        document.getElementById('schedule-workout-name').value = name;
+    quickLog(name) {
+        this.switchTab('journal');
+        this.toggleModal('journal-modal', true);
+        document.getElementById('journal-title').value = name;
     },
 
     renderWeeklySchedule() {
@@ -287,7 +290,7 @@ const App = {
         const list = document.getElementById('journal-list');
         if (!list) return;
         if (this.data.journals.length === 0) {
-            list.innerHTML = '<div class="empty-state">Journal is empty.</div>';
+            list.innerHTML = '<div class="empty-state">No workouts logged yet. Keep moving!</div>';
             return;
         }
 
@@ -300,7 +303,9 @@ const App = {
                     </div>
                     <button class="btn btn-danger btn-sm" onclick="App.deleteJournal('${j.id}')">Delete</button>
                 </div>
-                <p>${j.content}</p>
+                <div style="background: rgba(255,255,255,0.02); padding: 16px; border-radius: 12px; font-size: 0.9375rem;">
+                    <p style="margin-bottom: 0;">${j.content || 'No performance notes.'}</p>
+                </div>
             </div>
         `).join('');
     },
