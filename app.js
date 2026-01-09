@@ -2,18 +2,24 @@
 const App = {
     data: {
         workouts: JSON.parse(localStorage.getItem('workouts')) || [],
-        schedules: JSON.parse(localStorage.getItem('schedules')) || []
+        schedules: JSON.parse(localStorage.getItem('schedules')) || [],
+        journals: JSON.parse(localStorage.getItem('journals')) || []
     },
 
     save() {
         localStorage.setItem('workouts', JSON.stringify(this.data.workouts));
         localStorage.setItem('schedules', JSON.stringify(this.data.schedules));
+        localStorage.setItem('journals', JSON.stringify(this.data.journals));
         this.render();
     },
 
     init() {
         this.bindEvents();
         this.render();
+        
+        // Set default date for journal modal
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('journal-date').value = today;
     },
 
     bindEvents() {
@@ -36,6 +42,11 @@ const App = {
             this.toggleModal('schedule-modal', true);
         });
 
+        // Journal Modal
+        document.getElementById('open-journal-modal').addEventListener('click', () => {
+            this.toggleModal('journal-modal', true);
+        });
+
         // Close Modals
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -55,6 +66,12 @@ const App = {
             e.preventDefault();
             this.addSchedule();
         });
+
+        // Journal Form Submit
+        document.getElementById('journal-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.addJournal();
+        });
     },
 
     switchTab(tabId) {
@@ -71,6 +88,10 @@ const App = {
         document.getElementById(id).classList.toggle('active', show);
         if (!show) {
             document.getElementById(id).querySelector('form').reset();
+            // Reset journal date to today when closing
+            if (id === 'journal-modal') {
+                document.getElementById('journal-date').value = new Date().toISOString().split('T')[0];
+            }
         }
     },
 
@@ -123,16 +144,47 @@ const App = {
         this.save();
     },
 
+    // Journal Actions
+    addJournal() {
+        const date = document.getElementById('journal-date').value;
+        const title = document.getElementById('journal-title').value;
+        const content = document.getElementById('journal-content').value;
+
+        const newEntry = {
+            id: Date.now().toString(),
+            date,
+            title,
+            content
+        };
+
+        this.data.journals.unshift(newEntry); // Newest first
+        // Sort by date descending
+        this.data.journals.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        this.save();
+        this.toggleModal('journal-modal', false);
+    },
+
+    deleteJournal(id) {
+        if (!confirm('Are you sure you want to delete this entry?')) return;
+        this.data.journals = this.data.journals.filter(j => j.id !== id);
+        this.save();
+    },
+
     // UI Rendering
     render() {
         this.renderDashboard();
         this.renderWorkoutGrid();
         this.renderWeeklySchedule();
+        this.renderJournal();
     },
 
     renderDashboard() {
-        const today = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date());
-        const todaySchedules = this.data.schedules.filter(s => s.day === today);
+        const todayWeekday = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date());
+        const todayDate = new Date().toISOString().split('T')[0];
+        
+        const todaySchedules = this.data.schedules.filter(s => s.day === todayWeekday);
+        const todayJournal = this.data.journals.find(j => j.date === todayDate);
         
         const todayNameEl = document.getElementById('today-workout-name');
         const todayMetaEl = document.getElementById('today-workout-meta');
@@ -159,6 +211,19 @@ const App = {
             todayNameEl.textContent = 'Rest Day';
             todayMetaEl.textContent = 'Recovery is key';
             todayListEl.innerHTML = '<div class="empty-state">No workouts scheduled for today.</div>';
+        }
+
+        // Add Journal highlight to dashboard if exists for today
+        if (todayJournal) {
+            todayListEl.innerHTML += `
+                <div class="routine-item" style="border-left: 4px solid var(--accent-color); margin-top: 16px;">
+                    <div class="avatar" style="background: var(--card-bg); border: 1px solid var(--accent-color); color: var(--accent-color);">📝</div>
+                    <div class="flex-grow">
+                        <strong>Log: ${todayJournal.title}</strong>
+                        <p class="text-sm text-secondary">Logged today</p>
+                    </div>
+                </div>
+            `;
         }
 
         document.getElementById('total-scheduled').textContent = this.data.schedules.length;
@@ -213,6 +278,27 @@ const App = {
         }).join('');
     },
 
+    renderJournal() {
+        const list = document.getElementById('journal-list');
+        if (this.data.journals.length === 0) {
+            list.innerHTML = '<div class="empty-state">Your journal is empty. What did you do today?</div>';
+            return;
+        }
+
+        list.innerHTML = this.data.journals.map(j => `
+            <div class="journal-entry">
+                <div class="journal-entry-header">
+                    <div>
+                        <span class="date-badge">${new Date(j.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                        <h4 style="margin-top: 16px;">${j.title}</h4>
+                    </div>
+                    <button class="btn btn-danger btn-sm" onclick="App.deleteJournal('${j.id}')">Delete</button>
+                </div>
+                <p>${j.content}</p>
+            </div>
+        `).join('');
+    },
+
     populateWorkoutSelect() {
         const select = document.getElementById('schedule-workout-id');
         if (this.data.workouts.length === 0) {
@@ -230,3 +316,4 @@ App.init();
 
 // Global handles for HTML onclick attributes
 window.App = App;
+
