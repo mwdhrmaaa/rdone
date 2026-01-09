@@ -7,12 +7,15 @@ use Illuminate\Http\Request;
 
 class WorkoutController extends Controller
 {
+    use App\Models\Workout;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $workouts = Workout::all();
+        return view('private.scheduling.workouts.index', compact('workouts'));
     }
 
     /**
@@ -20,7 +23,7 @@ class WorkoutController extends Controller
      */
     public function create()
     {
-        //
+        return view('private.scheduling.workouts.create');
     }
 
     /**
@@ -28,38 +31,56 @@ class WorkoutController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'type' => 'required|string|max:255',
+        ]);
+
+        Workout::create($validated);
+
+        return redirect()->route('scheduling.workouts.index')->with('success', 'Workout created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Workout $workout)
     {
-        //
+        return view('private.scheduling.workouts.show', compact('workout'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Workout $workout)
     {
-        //
+        return view('private.scheduling.workouts.edit', compact('workout'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Workout $workout)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'type' => 'required|string|max:255',
+        ]);
+
+        $workout->update($validated);
+
+        return redirect()->route('scheduling.workouts.index')->with('success', 'Workout updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Workout $workout)
     {
-        //
+        $workout->delete();
+
+        return redirect()->route('scheduling.workouts.index')->with('success', 'Workout deleted successfully.');
     }
 }
