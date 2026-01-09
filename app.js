@@ -29,35 +29,36 @@ const App = {
         }
     },
 
-    seedData() {
+    seedData(force = false) {
+        if (!force && this.data.workouts.length > 0) return;
+        
         console.log('Seeding effective workout data...');
         const seedWorkouts = [
             { id: 'w1', name: 'Bench Press', type: 'Strength', desc: 'Chest, Shoulders, Triceps. 3 sets of 8-12 reps.' },
             { id: 'w2', name: 'Barbell Rows', type: 'Strength', desc: 'Back and Biceps. 3 sets of 10 reps.' },
             { id: 'w3', name: 'Back Squats', type: 'Strength', desc: 'Quads and Glutes. 3 sets of 8 reps.' },
-            { id: 'w4', name: 'Overhead Press', type: 'Strength', desc: 'Shoulder focus. 3 sets of 10 reps.' },
-            { id: 'w5', name: 'Deadlift', type: 'Strength', desc: 'Posterior chain. 3 sets of 5 reps.' },
-            { id: 'w6', name: 'Pull Ups', type: 'Strength', desc: 'Back and Biceps. 3 sets to failure.' },
-            { id: 'w7', name: 'Lunges', type: 'Strength', desc: 'Leg focus. 3 sets of 12 reps per leg.' },
-            { id: 'w8', name: 'HIIT Session', type: 'HIIT', desc: '20 mins of high intensity intervals.' }
+            { id: 'wOverhead', name: 'Overhead Press', type: 'Strength', desc: 'Shoulder focus. 3 sets of 10 reps.' },
+            { id: 'wDeadlift', name: 'Deadlift', type: 'Strength', desc: 'Posterior chain. 3 sets of 5 reps.' },
+            { id: 'wPulls', name: 'Pull Ups', type: 'Strength', desc: 'Back and Biceps. 3 sets to failure.' },
+            { id: 'wLunges', name: 'Lunges', type: 'Strength', desc: 'Leg focus. 3 sets of 12 reps per leg.' },
+            { id: 'wHiit', name: 'HIIT Session', type: 'HIIT', desc: '20 mins of high intensity intervals.' }
         ];
 
         const seedSchedules = [
             { id: 's1', workoutId: 'w1', workoutName: 'Bench Press', day: 'Monday', time: '07:00' },
-            { id: 's2', workoutId: 'w4', workoutName: 'Overhead Press', day: 'Monday', time: '07:30' },
-            { id: 's3', workoutId: 'w5', workoutName: 'Deadlift', day: 'Tuesday', time: '07:00' },
-            { id: 's4', workoutId: 'w6', workoutName: 'Pull Ups', day: 'Tuesday', time: '07:30' },
+            { id: 's2', workoutId: 'wOverhead', workoutName: 'Overhead Press', day: 'Monday', time: '07:30' },
+            { id: 's3', workoutId: 'wDeadlift', workoutName: 'Deadlift', day: 'Tuesday', time: '07:00' },
+            { id: 's4', workoutId: 'wPulls', workoutName: 'Pull Ups', day: 'Tuesday', time: '07:30' },
             { id: 's5', workoutId: 'w3', workoutName: 'Back Squats', day: 'Wednesday', time: '07:00' },
-            { id: 's6', workoutId: 'w7', workoutName: 'Lunges', day: 'Wednesday', time: '07:30' },
+            { id: 's6', workoutId: 'wLunges', workoutName: 'Lunges', day: 'Wednesday', time: '07:30' },
             { id: 's7', workoutId: 'w1', workoutName: 'Upper Body Hybrid', day: 'Friday', time: '07:00' },
             { id: 's8', workoutId: 'w2', workoutName: 'Barbell Rows', day: 'Friday', time: '07:30' },
-            { id: 's9', workoutId: 'w8', workoutName: 'HIIT Cardio', day: 'Saturday', time: '09:00' }
+            { id: 's9', workoutId: 'wHiit', workoutName: 'HIIT Cardio', day: 'Saturday', time: '09:00' }
         ];
 
         this.data.workouts = seedWorkouts;
         this.data.schedules = seedSchedules;
-        localStorage.setItem('workouts', JSON.stringify(this.data.workouts));
-        localStorage.setItem('schedules', JSON.stringify(this.data.schedules));
+        this.save();
     },
 
     bindEvents() {
@@ -103,6 +104,18 @@ const App = {
         this.bindForm('workout-form', () => this.addWorkout());
         this.bindForm('schedule-form', () => this.addSchedule());
         this.bindForm('journal-form', () => this.addJournal());
+
+        // Reset App
+        const resetBtn = document.getElementById('reset-app');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                if (confirm('This will clear all your workouts, schedules, and logs to apply the professional template. Continue?')) {
+                    this.seedData(true);
+                    this.render();
+                    alert('Template applied successfully!');
+                }
+            });
+        }
     },
 
     bindForm(id, action) {
