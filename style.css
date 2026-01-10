@@ -28,6 +28,20 @@ body {
 .app-container {
     display: flex;
     height: 100vh;
+    transition: all 0.3s ease;
+}
+
+.app-container.sidebar-collapsed .sidebar {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-right: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.app-container.sidebar-collapsed .content {
+    flex-grow: 1;
 }
 
 /* Sidebar */
@@ -38,6 +52,8 @@ body {
     padding: 24px;
     display: flex;
     flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
 .logo {
@@ -112,6 +128,30 @@ nav {
 .main-header h2 {
     font-size: 1.875rem;
     font-weight: 700;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .avatar {
