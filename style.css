@@ -685,7 +685,7 @@ nav {
     }
 
     .main-header h2 {
-        font-size: 1.25rem; /* Reduced from 1.875rem */
+        font-size: 1.1rem; /* Further reduced from 1.25rem */
     }
 
     .header-left {
@@ -703,7 +703,7 @@ nav {
     }
 
     .logo h1 {
-        font-size: 1.25rem; /* Added limit for logo title */
+        font-size: 1.1rem; /* Further reduced from 1.25rem */
     }
 
     #close-sidebar {
@@ -727,7 +727,7 @@ nav {
     }
 
     .tab-header h3 {
-        font-size: 1.1rem; /* Added limit for tab headers */
+        font-size: 1rem; /* Further reduced from 1.1rem */
     }
 
     .section-container {
@@ -735,7 +735,7 @@ nav {
     }
 
     .section-container h3 {
-        font-size: 1rem; /* Added limit for section headers */
+        font-size: 0.9rem; /* Further reduced from 1rem */
         margin-bottom: 12px;
     }
 
