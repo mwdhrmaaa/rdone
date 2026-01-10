@@ -1,3 +1,6 @@
+// Clear old data first
+localStorage.clear();
+
 // App State & Data Management
 const App = {
     data: {
@@ -40,16 +43,7 @@ const App = {
         if (!force && this.data.workouts.length > 0) return;
         
         console.log('Seeding effective workout data...');
-        const seedWorkouts = [
-            { id: 'w1', name: 'Bench Press', type: 'Strength', desc: 'Chest, Shoulders, Triceps. 3 sets of 8-12 reps.' },
-            { id: 'w2', name: 'Barbell Rows', type: 'Strength', desc: 'Back and Biceps. 3 sets of 10 reps.' },
-            { id: 'w3', name: 'Back Squats', type: 'Strength', desc: 'Quads and Glutes. 3 sets of 8 reps.' },
-            { id: 'wOverhead', name: 'Overhead Press', type: 'Strength', desc: 'Shoulder focus. 3 sets of 10 reps.' },
-            { id: 'wDeadlift', name: 'Deadlift', type: 'Strength', desc: 'Posterior chain. 3 sets of 5 reps.' },
-            { id: 'wPulls', name: 'Pull Ups', type: 'Strength', desc: 'Back and Biceps. 3 sets to failure.' },
-            { id: 'wLunges', name: 'Lunges', type: 'Strength', desc: 'Leg focus. 3 sets of 12 reps per leg.' },
-            { id: 'wHiit', name: 'HIIT Session', type: 'HIIT', desc: '20 mins of high intensity intervals.' }
-        ];
+        const seedWorkouts = [];
 
         const seedSchedules = [];
 
@@ -238,7 +232,7 @@ const App = {
     deleteWorkout(id) {
         this.showConfirm(
             'Delete Workout?',
-            'Are you sure? This will remove it from library and schedule.',
+            'Are you sure? This will remove it from schedule.',
             () => {
                 this.data.workouts = this.data.workouts.filter(w => w.id !== id);
                 this.data.schedules = this.data.schedules.filter(s => s.workoutId !== id);
@@ -392,7 +386,7 @@ const App = {
         );
 
         if (filtered.length === 0) {
-            grid.innerHTML = `<div class="empty-state">${this.data.searchQuery ? 'No matches found.' : 'No workouts in library.'}</div>`;
+            grid.innerHTML = `<div class="empty-state">${this.data.searchQuery ? 'No matches found.' : 'No workouts available.'}</div>`;
             return;
         }
 
