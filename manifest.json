@@ -1,6 +1,6 @@
 {
-  "name": "FitPlan - Premium Workout Scheduler",
-  "short_name": "FitPlan",
+  "name": "rdone - Premium Workout Scheduler",
+  "short_name": "rdone",
   "description": "Premium Workout Scheduler for targeted training and recovery.",
   "start_url": "index.html",
   "display": "standalone",
