@@ -26,6 +26,9 @@ const App = {
             this.seedData();
         }
         this.bindEvents();
+        // Clear active schedules for this session as requested
+        this.data.schedules = [];
+        this.save();
         this.render();
         
         // Set default date for journal modal if it exists
@@ -50,17 +53,7 @@ const App = {
             { id: 'wHiit', name: 'HIIT Session', type: 'HIIT', desc: '20 mins of high intensity intervals.' }
         ];
 
-        const seedSchedules = [
-            { id: 's1', workoutId: 'w1', workoutName: 'Bench Press', day: 'Monday', time: '07:00' },
-            { id: 's2', workoutId: 'wOverhead', workoutName: 'Overhead Press', day: 'Monday', time: '07:30' },
-            { id: 's3', workoutId: 'wDeadlift', workoutName: 'Deadlift', day: 'Tuesday', time: '07:00' },
-            { id: 's4', workoutId: 'wPulls', workoutName: 'Pull Ups', day: 'Tuesday', time: '07:30' },
-            { id: 's5', workoutId: 'w3', workoutName: 'Back Squats', day: 'Wednesday', time: '07:00' },
-            { id: 's6', workoutId: 'wLunges', workoutName: 'Lunges', day: 'Wednesday', time: '07:30' },
-            { id: 's7', workoutId: 'w1', workoutName: 'Upper Body Hybrid', day: 'Friday', time: '07:00' },
-            { id: 's8', workoutId: 'w2', workoutName: 'Barbell Rows', day: 'Friday', time: '07:30' },
-            { id: 's9', workoutId: 'wHiit', workoutName: 'HIIT Cardio', day: 'Saturday', time: '09:00' }
-        ];
+        const seedSchedules = [];
 
         this.data.workouts = seedWorkouts;
         this.data.schedules = seedSchedules;
