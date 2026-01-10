@@ -37,6 +37,7 @@ const App = {
         if (journalDateInput) {
             journalDateInput.value = new Date().toISOString().split('T')[0];
         }
+        this.registerServiceWorker();
     },
 
     seedData(force = false) {
@@ -443,6 +444,16 @@ const App = {
         const datalist = document.getElementById('workout-options');
         if (datalist) {
             datalist.innerHTML = this.data.workouts.map(w => `<option value="${w.name}">`).join('');
+        }
+    },
+
+    registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered:', reg))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
         }
     }
 };
