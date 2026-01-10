@@ -716,26 +716,40 @@ nav {
         align-self: flex-end;
     }
 
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr); /* Force 2 columns for stat cards */
+        gap: 12px; /* Tighter gap */
+        margin-bottom: 24px;
+    }
+
     .stat-card {
-        padding: 14px 12px; /* Further reduced from 18x14 */
-        border-radius: 12px; /* Slightly sharper for elegance */
+        padding: 12px; /* Ultra tight padding */
+        border-radius: 12px;
+        flex-direction: column; /* Stack info and icon for small width */
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .stat-info {
+        width: 100%;
     }
 
     .stat-value {
-        font-size: 1.1rem; /* Significantly reduced from 1.4rem */
+        font-size: 1rem; /* Compact value */
     }
 
     .stat-card h3 {
-        font-size: 0.75rem; /* Micro heading */
-        margin-bottom: 4px;
+        font-size: 0.7rem;
+        margin-bottom: 2px;
     }
 
     .stat-card p {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
 
     .stat-icon {
-        font-size: 1.25rem; /* Smaller icon */
+        font-size: 1.1rem;
+        align-self: flex-end; /* Push icon to corner */
     }
 
     .tab-header h3 {
