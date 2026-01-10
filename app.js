@@ -26,9 +26,6 @@ const App = {
             this.seedData();
         }
         this.bindEvents();
-        // Clear active schedules for this session as requested
-        this.data.schedules = [];
-        this.save();
         this.render();
         
         // Set default date for journal modal if it exists
