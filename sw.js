@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitplan-v1';
+const CACHE_NAME = 'rdone-v1';
 const ASSETS = [
   'index.html',
   'style.css',
