@@ -684,6 +684,10 @@ nav {
         gap: 10px;
     }
 
+    .main-header h2 {
+        font-size: 1.25rem; /* Reduced from 1.875rem */
+    }
+
     .header-left {
         width: 100%;
         justify-content: space-between;
@@ -696,6 +700,10 @@ nav {
     .logo {
         justify-content: space-between;
         margin-bottom: 20px;
+    }
+
+    .logo h1 {
+        font-size: 1.25rem; /* Added limit for logo title */
     }
 
     #close-sidebar {
@@ -718,8 +726,17 @@ nav {
         font-size: 0.85rem;
     }
 
+    .tab-header h3 {
+        font-size: 1.1rem; /* Added limit for tab headers */
+    }
+
     .section-container {
         padding: 16px 14px;
+    }
+
+    .section-container h3 {
+        font-size: 1rem; /* Added limit for section headers */
+        margin-bottom: 12px;
     }
 
     /* Slinker Buttons */
