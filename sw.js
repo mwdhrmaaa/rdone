@@ -1,11 +1,11 @@
-const CACHE_NAME = 'rdone-v4';
+const CACHE_NAME = 'rdone-v5';
 const ASSETS = [
   'index.html',
   'style.css',
   'app.js',
-  'manifest.json',
-  'icon-192.png',
-  'icon-512.png'
+  'rdone.webmanifest',
+  'rdone-192.png',
+  'rdone-512.png'
 ];
 
 self.addEventListener('install', (event) => {
