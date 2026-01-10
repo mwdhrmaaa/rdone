@@ -12,6 +12,10 @@
     --font-main: 'Outfit', sans-serif;
 }
 
+.text-accent {
+    color: var(--accent-color);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -369,11 +373,19 @@ nav {
 
 .day-row {
     display: grid;
-    grid-template-columns: 120px 1fr 100px;
+    grid-template-columns: 140px 1fr;
     padding: 16px;
     background-color: rgba(255, 255, 255, 0.02);
     border-radius: 12px;
     align-items: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.day-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(99, 102, 241, 0.3);
 }
 
 .day-name {
@@ -389,9 +401,58 @@ nav {
 .scheduled-item {
     background-color: var(--accent-color);
     color: white;
-    padding: 4px 12px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 0.8125rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeIn 0.2s ease;
+}
+
+.scheduled-item:hover {
+    background-color: var(--accent-hover);
+}
+
+.scheduled-item .remove-btn {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.scheduled-item .remove-btn:hover {
+    opacity: 1;
+}
+
+.inline-schedule-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.inline-schedule-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--accent-color);
     border-radius: 8px;
-    font-size: 0.75rem;
+    padding: 8px 12px;
+    color: white;
+    font-family: inherit;
+    font-size: 0.875rem;
+    outline: none;
+}
+
+.add-prompt {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.day-row:hover .add-prompt {
+    opacity: 0.6;
 }
 
 /* Journal Styles */
