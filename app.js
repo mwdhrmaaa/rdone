@@ -443,23 +443,77 @@ const App = {
         daysContainer.innerHTML = days.map(day => {
             const daySchedules = this.data.schedules.filter(s => s.day === day);
             return `
-                <div class="day-row">
-                    <div class="day-name">${day} ${day === today ? '(Today)' : ''}</div>
-                    <div class="day-workouts">
+                <div class="day-row" onclick="App.startInlineEdit(event, '${day}')">
+                    <div class="day-name">${day} ${day === today ? '<span class="text-accent">(Today)</span>' : ''}</div>
+                    <div class="day-workouts" id="workouts-${day}">
                         ${daySchedules.map(s => {
                             const w = s.workoutId ? this.data.workouts.find(work => work.id === s.workoutId) : null;
                             const name = w ? w.name : s.workoutName;
                             return `
-                                <div class="scheduled-item">
-                                    ${name} ${s.time ? ` @ ${s.time}` : ''}
-                                    <span style="cursor:pointer; margin-left:8px;" onclick="App.removeSchedule('${s.id}')">×</span>
+                                <div class="scheduled-item" onclick="event.stopPropagation()">
+                                    <span>${name}${s.time ? ` @ ${s.time}` : ''}</span>
+                                    <span class="remove-btn" onclick="App.removeSchedule('${s.id}')">×</span>
                                 </div>
                             `;
-                        }).join('') || '<span class="text-secondary">Rest</span>'}
+                        }).join('')}
+                        <span class="add-prompt">+ Click to add</span>
                     </div>
                 </div>
             `;
         }).join('');
+    },
+
+    startInlineEdit(event, day) {
+        // Prevent if already editing this day
+        if (document.querySelector(`.inline-schedule-input[data-day="${day}"]`)) return;
+
+        const container = document.getElementById(`workouts-${day}`);
+        const prompt = container.querySelector('.add-prompt');
+        if (prompt) prompt.style.display = 'none';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'inline-schedule-input';
+        input.dataset.day = day;
+        input.placeholder = 'Type workout (e.g. Bench Press) and press Enter';
+        
+        // Add datalist support if possible
+        input.setAttribute('list', 'workout-options');
+
+        input.onclick = (e) => e.stopPropagation();
+        
+        input.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                this.saveInlineSchedule(day, input.value);
+            } else if (e.key === 'Escape') {
+                this.renderWeeklySchedule();
+            }
+        };
+
+        input.onblur = () => {
+            // Delay to allow for potential clicks or just re-render
+            setTimeout(() => this.renderWeeklySchedule(), 200);
+        };
+
+        container.appendChild(input);
+        input.focus();
+    },
+
+    saveInlineSchedule(day, workoutName) {
+        if (!workoutName.trim()) {
+            this.renderWeeklySchedule();
+            return;
+        }
+
+        const match = this.data.workouts.find(w => w.name.toLowerCase() === workoutName.toLowerCase());
+        this.data.schedules.push({
+            id: Date.now().toString(),
+            workoutName: workoutName.trim(),
+            workoutId: match ? match.id : null,
+            day: day,
+            time: '' // Inline is quick add, time can be added via modal if needed later
+        });
+        this.save();
     },
 
     renderJournal() {
