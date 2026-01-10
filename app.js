@@ -62,11 +62,7 @@ const App = {
             });
         });
 
-        // Workout Modal
-        const openWorkoutBtn = document.getElementById('open-workout-modal');
-        if (openWorkoutBtn) {
-            openWorkoutBtn.addEventListener('click', () => this.toggleModal('workout-modal', true));
-        }
+
 
         // Schedule Modal
         const openScheduleBtn = document.getElementById('open-schedule-modal');
@@ -92,7 +88,7 @@ const App = {
         });
 
         // Form Submissions
-        this.bindForm('workout-form', () => this.addWorkout());
+
         this.bindForm('schedule-form', () => this.addSchedule());
         this.bindForm('journal-form', () => this.addJournal());
 
@@ -171,13 +167,7 @@ const App = {
         if (!show) {
             const form = modal.querySelector('form');
             if (form) form.reset();
-            if (id === 'workout-modal') {
-                this.data.editingWorkoutId = null;
-                const title = modal.querySelector('h3');
-                if (title) title.textContent = 'Add Workout';
-                const btn = document.getElementById('save-workout-btn');
-                if (btn) btn.textContent = 'Save Workout';
-            }
+
             if (id === 'journal-modal') {
                 const journalDateInput = document.getElementById('journal-date');
                 if (journalDateInput) journalDateInput.value = new Date().toISOString().split('T')[0];
@@ -193,53 +183,7 @@ const App = {
     },
 
     // Actions
-    addWorkout() {
-        const name = document.getElementById('workout-name').value;
-        const type = document.getElementById('workout-type').value;
-        const desc = document.getElementById('workout-desc').value;
 
-        if (this.data.editingWorkoutId) {
-            const index = this.data.workouts.findIndex(w => w.id === this.data.editingWorkoutId);
-            if (index !== -1) {
-                this.data.workouts[index] = { ...this.data.workouts[index], name, type, desc };
-            }
-        } else {
-            this.data.workouts.push({ id: Date.now().toString(), name, type, desc });
-        }
-        
-        this.save();
-        this.toggleModal('workout-modal', false);
-    },
-
-    editWorkout(id) {
-        const workout = this.data.workouts.find(w => w.id === id);
-        if (!workout) return;
-
-        this.data.editingWorkoutId = id;
-        document.getElementById('workout-name').value = workout.name;
-        document.getElementById('workout-type').value = workout.type;
-        document.getElementById('workout-desc').value = workout.desc;
-
-        const modal = document.getElementById('workout-modal');
-        const title = modal.querySelector('h3');
-        if (title) title.textContent = 'Edit Workout';
-        const btn = document.getElementById('save-workout-btn');
-        if (btn) btn.textContent = 'Update Workout';
-
-        this.toggleModal('workout-modal', true);
-    },
-
-    deleteWorkout(id) {
-        this.showConfirm(
-            'Delete Workout?',
-            'Are you sure? This will remove it from schedule.',
-            () => {
-                this.data.workouts = this.data.workouts.filter(w => w.id !== id);
-                this.data.schedules = this.data.schedules.filter(s => s.workoutId !== id);
-                this.save();
-            }
-        );
-    },
 
     addSchedule() {
         const workoutName = document.getElementById('schedule-workout-name').value;
@@ -313,7 +257,7 @@ const App = {
     // Rendering
     render() {
         this.renderDashboard();
-        this.renderWorkoutGrid();
+
         this.renderWeeklySchedule();
         this.renderJournal();
     },
@@ -371,40 +315,10 @@ const App = {
         }
 
         const scheduledEl = document.getElementById('total-scheduled');
-        const workoutsEl = document.getElementById('total-workouts');
         if (scheduledEl) scheduledEl.textContent = this.data.schedules.length;
-        if (workoutsEl) workoutsEl.textContent = this.data.workouts.length;
     },
 
-    renderWorkoutGrid() {
-        const grid = document.getElementById('workout-grid');
-        if (!grid) return;
 
-        const filtered = this.data.workouts.filter(w => 
-            w.name.toLowerCase().includes(this.data.searchQuery) || 
-            w.type.toLowerCase().includes(this.data.searchQuery)
-        );
-
-        if (filtered.length === 0) {
-            grid.innerHTML = `<div class="empty-state">${this.data.searchQuery ? 'No matches found.' : 'No workouts available.'}</div>`;
-            return;
-        }
-
-        grid.innerHTML = filtered.map(w => `
-            <div class="workout-card">
-                <div class="workout-card-header">
-                    <span class="badge">${w.type}</span>
-                </div>
-                <h4 class="mb-2">${w.name}</h4>
-                <p>${w.desc || 'No description'}</p>
-                <div class="card-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="App.editWorkout('${w.id}')">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="App.deleteWorkout('${w.id}')">Delete</button>
-                    <button class="btn btn-primary btn-sm" style="margin-left: auto;" onclick="App.quickSchedule('${w.name}')">Schedule</button>
-                </div>
-            </div>
-        `).join('');
-    },
 
     quickSchedule(name) {
         this.switchTab('schedule');
