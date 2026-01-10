@@ -633,7 +633,7 @@ nav {
 /* Mobile Responsiveness & Enlargements */
 @media (max-width: 768px) {
     :root {
-        font-size: 15px; /* Reduced from 17px for elegance */
+        font-size: 14px; /* Further reduced from 15px */
     }
 
     .app-container {
@@ -645,7 +645,7 @@ nav {
         top: 0;
         left: 0;
         height: 100%;
-        width: 260px; /* Slightly narrower */
+        width: 250px; /* Even narrower */
         z-index: 2000;
         box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
         transform: translateX(0);
@@ -655,12 +655,12 @@ nav {
 
     .app-container.sidebar-collapsed .sidebar {
         transform: translateX(-100%);
-        width: 260px;
+        width: 250px;
         opacity: 0;
     }
 
     .content {
-        padding: 20px 14px; /* Slightly tighter padding */
+        padding: 16px 12px; /* Tighter padding */
         width: 100%;
     }
 
@@ -678,10 +678,10 @@ nav {
     }
 
     .main-header {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 10px;
     }
 
     .header-left {
@@ -695,7 +695,7 @@ nav {
 
     .logo {
         justify-content: space-between;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
     }
 
     #close-sidebar {
@@ -707,96 +707,92 @@ nav {
     }
 
     .stat-card {
-        padding: 24px 20px; /* Reduced from 32x24 */
+        padding: 20px 16px; /* Reduced from 24x20 */
     }
 
     .stat-value {
-        font-size: 1.75rem; /* Reduced from 2rem */
+        font-size: 1.5rem; /* Reduced from 1.75rem */
     }
 
     .stat-card h3 {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
     .section-container {
-        padding: 20px 16px;
+        padding: 16px 14px;
     }
 
-    /* Enlarge Buttons for Touch (but keep them sleeker) */
+    /* Slinker Buttons */
     .btn {
-        padding: 12px 20px;
-        font-size: 0.95rem;
+        padding: 10px 16px;
+        font-size: 0.9rem;
     }
 
     .btn-sm {
-        padding: 8px 14px;
-        font-size: 0.8rem;
+        padding: 6px 12px;
+        font-size: 0.75rem;
     }
 
     .nav-item {
-        padding: 14px 18px;
-        font-size: 1rem;
-        margin-bottom: 8px;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        margin-bottom: 6px;
     }
 
     /* Workout Cards */
     .workout-card {
-        padding: 24px 20px;
+        padding: 20px 16px;
     }
 
     .workout-card h4 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .workout-card p {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         height: auto;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
 
     .card-actions {
         flex-direction: column;
-        gap: 10px;
-    }
-
-    .card-actions .btn {
-        width: 100%;
+        gap: 8px;
     }
 
     /* Search Box */
     .header-actions {
         width: 100%;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
     .search-box {
         width: 100%;
-        padding: 2px 14px;
+        padding: 2px 12px;
     }
 
     .search-box input {
         width: 100%;
-        font-size: 0.95rem;
-        padding: 10px 0;
+        font-size: 0.9rem;
+        padding: 8px 0;
     }
 
     /* Modals */
     .modal-content {
-        width: 92% !important;
-        padding: 20px;
-        margin: 8px;
-        max-height: 85vh;
+        width: 90% !important;
+        padding: 16px;
+        margin: 6px;
+        max-height: 80vh;
         overflow-y: auto;
     }
 
     .confirm-box {
-        width: 85% !important;
+        width: 80% !important;
     }
 
     .modal-actions {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
     .modal-actions .btn {
