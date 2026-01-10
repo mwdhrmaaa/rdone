@@ -717,15 +717,25 @@ nav {
     }
 
     .stat-card {
-        padding: 18px 14px; /* Slightly tighter */
+        padding: 14px 12px; /* Further reduced from 18x14 */
+        border-radius: 12px; /* Slightly sharper for elegance */
     }
 
     .stat-value {
-        font-size: 1.4rem; /* Slightly smaller */
+        font-size: 1.1rem; /* Significantly reduced from 1.4rem */
     }
 
     .stat-card h3 {
-        font-size: 0.8rem;
+        font-size: 0.75rem; /* Micro heading */
+        margin-bottom: 4px;
+    }
+
+    .stat-card p {
+        font-size: 0.7rem;
+    }
+
+    .stat-icon {
+        font-size: 1.25rem; /* Smaller icon */
     }
 
     .tab-header h3 {
@@ -733,12 +743,31 @@ nav {
     }
 
     .section-container {
-        padding: 14px 12px;
+        padding: 12px 10px; /* Further reduced from 14x12 */
+        border-radius: 16px;
     }
 
     .section-container h3 {
-        font-size: 0.85rem; /* Matched to sidebar footer style */
-        margin-bottom: 10px;
+        font-size: 0.8rem; /* Further reduced from 0.85rem */
+        margin-bottom: 8px;
+    }
+
+    .empty-state {
+        font-size: 0.8rem;
+        padding: 12px;
+    }
+
+    .routine-item {
+        padding: 10px;
+        margin-bottom: 6px;
+    }
+
+    .routine-info h4 {
+        font-size: 0.85rem;
+    }
+
+    .routine-info p {
+        font-size: 0.75rem;
     }
 
     /* Slinker Buttons */
