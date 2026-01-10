@@ -17,6 +17,10 @@ const App = {
 
     init() {
         console.log('App Initializing...');
+        // Collapse sidebar by default on mobile
+        if (window.innerWidth <= 768) {
+            document.querySelector('.app-container').classList.add('sidebar-collapsed');
+        }
         // Seed data if empty
         if (this.data.workouts.length === 0) {
             this.seedData();
@@ -137,6 +141,20 @@ const App = {
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => this.toggleSidebar());
         }
+
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        if (closeSidebarBtn) {
+            closeSidebarBtn.addEventListener('click', () => this.toggleSidebar());
+        }
+
+        // Close sidebar on navigation (mobile)
+        document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.app-container').classList.add('sidebar-collapsed');
+                }
+            });
+        });
     },
 
     bindForm(id, action) {

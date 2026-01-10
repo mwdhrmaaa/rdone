@@ -29,6 +29,8 @@ body {
     display: flex;
     height: 100vh;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .app-container.sidebar-collapsed .sidebar {
@@ -38,6 +40,7 @@ body {
     border-right: none;
     opacity: 0;
     pointer-events: none;
+    transform: translateX(-100%);
 }
 
 .app-container.sidebar-collapsed .content {
@@ -109,6 +112,10 @@ nav {
 
 .nav-item.active .icon {
     filter: brightness(0) invert(1);
+}
+
+.mobile-only {
+    display: none;
 }
 
 /* Main Content */
@@ -577,12 +584,36 @@ nav {
         top: 0;
         left: 0;
         height: 100%;
+        width: 280px;
         z-index: 2000;
         box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .app-container.sidebar-collapsed .sidebar {
+        transform: translateX(-100%);
+        width: 280px; /* Keep width consistent on mobile even when animating out */
+        opacity: 0;
     }
 
     .content {
         padding: 24px 16px;
+        width: 100%;
+    }
+
+    /* Add an overlay when sidebar is open on mobile */
+    .app-container:not(.sidebar-collapsed)::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1500;
     }
 
     .main-header {
@@ -595,6 +626,19 @@ nav {
     .header-left {
         width: 100%;
         justify-content: space-between;
+    }
+
+    .mobile-only {
+        display: flex;
+    }
+
+    .logo {
+        justify-content: space-between;
+        margin-bottom: 32px;
+    }
+
+    #close-sidebar {
+        margin-left: auto;
     }
 
     .user-profile {
