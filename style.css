@@ -685,7 +685,8 @@ nav {
     }
 
     .main-header h2 {
-        font-size: 1.1rem; /* Further reduced from 1.25rem */
+        font-size: 0.85rem; /* Matched to sidebar footer style */
+        font-weight: 600;
     }
 
     .header-left {
@@ -703,7 +704,8 @@ nav {
     }
 
     .logo h1 {
-        font-size: 1.1rem; /* Further reduced from 1.25rem */
+        font-size: 0.85rem; /* Matched to sidebar footer style */
+        letter-spacing: 0.5px;
     }
 
     #close-sidebar {
@@ -715,28 +717,28 @@ nav {
     }
 
     .stat-card {
-        padding: 20px 16px; /* Reduced from 24x20 */
+        padding: 18px 14px; /* Slightly tighter */
     }
 
     .stat-value {
-        font-size: 1.5rem; /* Reduced from 1.75rem */
+        font-size: 1.4rem; /* Slightly smaller */
     }
 
     .stat-card h3 {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .tab-header h3 {
-        font-size: 1rem; /* Further reduced from 1.1rem */
+        font-size: 0.85rem; /* Matched to sidebar footer style */
     }
 
     .section-container {
-        padding: 16px 14px;
+        padding: 14px 12px;
     }
 
     .section-container h3 {
-        font-size: 0.9rem; /* Further reduced from 1rem */
-        margin-bottom: 12px;
+        font-size: 0.85rem; /* Matched to sidebar footer style */
+        margin-bottom: 10px;
     }
 
     /* Slinker Buttons */
