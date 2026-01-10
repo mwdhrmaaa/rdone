@@ -98,7 +98,7 @@ const App = {
             resetBtn.addEventListener('click', () => {
                 this.showConfirm(
                     'Reset Application?', 
-                    'This will clear all your workouts, schedules, and logs to apply the professional template.',
+                    'This will clear all your schedules and logs to restart your journey.',
                     () => {
                         this.seedData(true);
                         this.render();
