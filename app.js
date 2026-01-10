@@ -26,6 +26,7 @@ const App = {
             this.seedData();
         }
         this.bindEvents();
+        this.switchTab('schedule'); // Show the planner immediately
         this.render();
         
         // Set default date for journal modal if it exists
