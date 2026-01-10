@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rdone-v5';
+const CACHE_NAME = 'rdone-v6';
 const ASSETS = [
   'index.html',
   'style.css',
@@ -14,6 +14,11 @@ self.addEventListener('install', (event) => {
       return cache.addAll(ASSETS);
     })
   );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
 });
 
 self.addEventListener('fetch', (event) => {
