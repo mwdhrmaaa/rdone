@@ -3,7 +3,9 @@ const App = {
     data: {
         workouts: JSON.parse(localStorage.getItem('workouts')) || [],
         schedules: JSON.parse(localStorage.getItem('schedules')) || [],
-        journals: JSON.parse(localStorage.getItem('journals')) || []
+        journals: JSON.parse(localStorage.getItem('journals')) || [],
+        editingWorkoutId: null,
+        searchQuery: ''
     },
 
     save() {
@@ -109,11 +111,24 @@ const App = {
         const resetBtn = document.getElementById('reset-app');
         if (resetBtn) {
             resetBtn.addEventListener('click', () => {
-                if (confirm('This will clear all your workouts, schedules, and logs to apply the professional template. Continue?')) {
-                    this.seedData(true);
-                    this.render();
-                    alert('Template applied successfully!');
-                }
+                this.showConfirm(
+                    'Reset Application?', 
+                    'This will clear all your workouts, schedules, and logs to apply the professional template.',
+                    () => {
+                        this.seedData(true);
+                        this.render();
+                        // Professional notification would go here
+                    }
+                );
+            });
+        }
+
+        // Search Workouts
+        const searchInput = document.getElementById('workout-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.data.searchQuery = e.target.value.toLowerCase();
+                this.renderWorkoutGrid();
             });
         }
 
@@ -153,6 +168,13 @@ const App = {
         if (!show) {
             const form = modal.querySelector('form');
             if (form) form.reset();
+            if (id === 'workout-modal') {
+                this.data.editingWorkoutId = null;
+                const title = modal.querySelector('h3');
+                if (title) title.textContent = 'Add Workout';
+                const btn = document.getElementById('save-workout-btn');
+                if (btn) btn.textContent = 'Save Workout';
+            }
             if (id === 'journal-modal') {
                 const journalDateInput = document.getElementById('journal-date');
                 if (journalDateInput) journalDateInput.value = new Date().toISOString().split('T')[0];
@@ -173,16 +195,47 @@ const App = {
         const type = document.getElementById('workout-type').value;
         const desc = document.getElementById('workout-desc').value;
 
-        this.data.workouts.push({ id: Date.now().toString(), name, type, desc });
+        if (this.data.editingWorkoutId) {
+            const index = this.data.workouts.findIndex(w => w.id === this.data.editingWorkoutId);
+            if (index !== -1) {
+                this.data.workouts[index] = { ...this.data.workouts[index], name, type, desc };
+            }
+        } else {
+            this.data.workouts.push({ id: Date.now().toString(), name, type, desc });
+        }
+        
         this.save();
         this.toggleModal('workout-modal', false);
     },
 
+    editWorkout(id) {
+        const workout = this.data.workouts.find(w => w.id === id);
+        if (!workout) return;
+
+        this.data.editingWorkoutId = id;
+        document.getElementById('workout-name').value = workout.name;
+        document.getElementById('workout-type').value = workout.type;
+        document.getElementById('workout-desc').value = workout.desc;
+
+        const modal = document.getElementById('workout-modal');
+        const title = modal.querySelector('h3');
+        if (title) title.textContent = 'Edit Workout';
+        const btn = document.getElementById('save-workout-btn');
+        if (btn) btn.textContent = 'Update Workout';
+
+        this.toggleModal('workout-modal', true);
+    },
+
     deleteWorkout(id) {
-        if (!confirm('Are you sure? This will remove it from library and schedule.')) return;
-        this.data.workouts = this.data.workouts.filter(w => w.id !== id);
-        this.data.schedules = this.data.schedules.filter(s => s.workoutId !== id);
-        this.save();
+        this.showConfirm(
+            'Delete Workout?',
+            'Are you sure? This will remove it from library and schedule.',
+            () => {
+                this.data.workouts = this.data.workouts.filter(w => w.id !== id);
+                this.data.schedules = this.data.schedules.filter(s => s.workoutId !== id);
+                this.save();
+            }
+        );
     },
 
     addSchedule() {
@@ -219,9 +272,39 @@ const App = {
     },
 
     deleteJournal(id) {
-        if (!confirm('Are you sure?')) return;
-        this.data.journals = this.data.journals.filter(j => j.id !== id);
-        this.save();
+        this.showConfirm(
+            'Delete Log?',
+            'Are you sure you want to remove this log entry?',
+            () => {
+                this.data.journals = this.data.journals.filter(j => j.id !== id);
+                this.save();
+            }
+        );
+    },
+
+    showConfirm(title, message, onOk) {
+        const modal = document.getElementById('confirm-modal');
+        const titleEl = document.getElementById('confirm-title');
+        const msgEl = document.getElementById('confirm-message');
+        const okBtn = document.getElementById('confirm-ok');
+        const cancelBtn = document.getElementById('confirm-cancel');
+
+        if (!modal || !titleEl || !msgEl || !okBtn || !cancelBtn) return;
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        modal.classList.add('active');
+
+        // Clean up old listeners
+        const newOkBtn = okBtn.cloneNode(true);
+        okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+        
+        newOkBtn.addEventListener('click', () => {
+            onOk();
+            modal.classList.remove('active');
+        });
+
+        cancelBtn.onclick = () => modal.classList.remove('active');
     },
 
     // Rendering
@@ -293,12 +376,18 @@ const App = {
     renderWorkoutGrid() {
         const grid = document.getElementById('workout-grid');
         if (!grid) return;
-        if (this.data.workouts.length === 0) {
-            grid.innerHTML = '<div class="empty-state">No workouts in library.</div>';
+
+        const filtered = this.data.workouts.filter(w => 
+            w.name.toLowerCase().includes(this.data.searchQuery) || 
+            w.type.toLowerCase().includes(this.data.searchQuery)
+        );
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="empty-state">${this.data.searchQuery ? 'No matches found.' : 'No workouts in library.'}</div>`;
             return;
         }
 
-        grid.innerHTML = this.data.workouts.map(w => `
+        grid.innerHTML = filtered.map(w => `
             <div class="workout-card">
                 <div class="workout-card-header">
                     <span class="badge">${w.type}</span>
@@ -306,8 +395,9 @@ const App = {
                 <h4 class="mb-2">${w.name}</h4>
                 <p>${w.desc || 'No description'}</p>
                 <div class="card-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="App.editWorkout('${w.id}')">Edit</button>
                     <button class="btn btn-danger btn-sm" onclick="App.deleteWorkout('${w.id}')">Delete</button>
-                    <button class="btn btn-secondary btn-sm" onclick="App.quickSchedule('${w.name}')">Schedule</button>
+                    <button class="btn btn-primary btn-sm" style="margin-left: auto;" onclick="App.quickSchedule('${w.name}')">Schedule</button>
                 </div>
             </div>
         `).join('');
