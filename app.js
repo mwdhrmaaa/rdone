@@ -116,6 +116,12 @@ const App = {
                 }
             });
         }
+
+        // Sidebar Toggle
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => this.toggleSidebar());
+        }
     },
 
     bindForm(id, action) {
@@ -151,6 +157,13 @@ const App = {
                 const journalDateInput = document.getElementById('journal-date');
                 if (journalDateInput) journalDateInput.value = new Date().toISOString().split('T')[0];
             }
+        }
+    },
+
+    toggleSidebar() {
+        const container = document.querySelector('.app-container');
+        if (container) {
+            container.classList.toggle('sidebar-collapsed');
         }
     },
 
