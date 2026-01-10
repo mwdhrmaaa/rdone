@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rdone-v8';
+const CACHE_NAME = 'rdone-v9';
 const ASSETS = [
   'index.html',
   'style.css',
